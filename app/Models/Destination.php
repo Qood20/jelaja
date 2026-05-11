@@ -17,6 +17,19 @@ class Destination extends Model
         ];
     }
 
+    public function getImageUrlAttribute($value)
+    {
+        if (!$value) return null;
+        
+        // Jika sudah berupa URL lengkap (Unsplash dll), kembalikan langsung
+        if (str_starts_with($value, 'http')) {
+            return $value;
+        }
+
+        // Pastikan menggunakan asset() untuk domain hosting
+        return asset($value);
+    }
+
     public function operator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'operator_id');

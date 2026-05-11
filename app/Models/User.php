@@ -23,7 +23,13 @@ class User extends Authenticatable
      */
     public function getProfilePhotoUrl(): string
     {
-        return $this->profile_photo_url ?: 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
+        if ($this->profile_photo_url) {
+            return str_starts_with($this->profile_photo_url, 'http') 
+                ? $this->profile_photo_url 
+                : asset($this->profile_photo_url);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';
     }
 
     public function destinations(): HasMany
