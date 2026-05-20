@@ -28,7 +28,7 @@
                                 <p class="text-xs text-slate-400">Total Bayar</p>
                                 <p class="font-bold text-slate-900 uppercase">Rp{{ number_format($trx->gross_amount, 0, ',', '.') }}</p>
                             </div>
-                            @if($trx->status === 'paid')
+                            @if($trx->status === 'paid' && $trx->tickets->isNotEmpty())
                                 <a href="{{ route('buyer.tickets.show', $trx->tickets->first()) }}" class="rounded-2xl bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-100 transition">
                                     Lihat Tiket
                                 </a>

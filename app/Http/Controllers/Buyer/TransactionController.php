@@ -11,7 +11,7 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $transactions = Transaction::query()
-            ->with('destination')
+            ->with(['destination', 'tickets'])
             ->where('user_id', $request->user()->id)
             ->latest()
             ->paginate(10);
