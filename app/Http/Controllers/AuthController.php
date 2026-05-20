@@ -41,6 +41,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'phone' => ['required', 'string', 'max:20'],
             'password' => ['required', 'confirmed', Password::min(8)],
             'role' => ['required', 'in:buyer,operator'],
         ]);
@@ -48,6 +49,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
+            'phone' => $data['phone'],
             'role' => $data['role'],
             'password' => Hash::make($data['password']),
         ]);
