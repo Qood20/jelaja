@@ -12,12 +12,17 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         $recommended = Destination::query()->orderByDesc('most_booked')->take(6)->get();
+        
+        // Hanya ambil tiket yang statusnya available DAN tanggal kunjungannya >= hari ini
         $tickets = Ticket::query()
-            ->with('destination', 'transaction')
+            ->with(['destination', 'transaction'])
             ->where('user_id', $request->user()->id)
             ->where('status', 'available')
+            ->whereHas('transaction', function ($q) {
+                $q->whereDate('visit_date', '>=', \Carbon\Carbon::today());
+            })
             ->latest()
-            ->take(5)
+            ->take(4)
             ->get();
 
         return view('buyer.dashboard', compact('recommended', 'tickets'));
