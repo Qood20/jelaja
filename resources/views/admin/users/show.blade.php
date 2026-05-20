@@ -29,7 +29,6 @@
         </div>
         <div class="mt-6 flex flex-wrap gap-3">
             <a href="{{ route('admin.users.edit', $user) }}" class="rounded-full bg-blue-700 px-5 py-3 text-sm font-semibold text-white hover:bg-blue-800">Edit User</a>
-            <a href="{{ route('admin.users.index') }}" class="rounded-full border border-slate-300 px-5 py-3 text-sm font-medium text-slate-700 hover:bg-slate-100">Kembali</a>
         </div>
     </div>
 </x-layouts.app>

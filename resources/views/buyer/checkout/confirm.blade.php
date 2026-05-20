@@ -42,8 +42,7 @@
             <input type="hidden" name="visit_date" value="{{ $visit_date }}">
             <input type="hidden" name="quantity" value="{{ $quantity }}">
             <div class="flex gap-3">
-                <a href="{{ route('buyer.destinations.show', $destination) }}" class="flex-1 rounded-xl border border-slate-300 bg-white px-5 py-3 text-center text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Kembali</a>
-                <button type="submit" class="flex-1 rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800">Bayar Sekarang</button>
+                <button type="submit" class="w-full rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-800">Bayar Sekarang</button>
             </div>
         </form>
     </div>

@@ -54,10 +54,12 @@ Route::get('/dashboard', function () {
     };
 })->middleware('auth')->name('dashboard.redirect');
 
+// Halaman Wisata (Public)
+Route::get('/wisata', [BuyerDestinationController::class, 'index'])->name('destinations.index');
+Route::get('/wisata/{destination}', [BuyerDestinationController::class, 'show'])->name('destinations.show');
+
 Route::prefix('buyer')->middleware(['auth', 'role:buyer'])->name('buyer.')->group(function () {
     Route::get('/dashboard', [BuyerDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/wisata', [BuyerDestinationController::class, 'index'])->name('destinations.index');
-    Route::get('/wisata/{destination}', [BuyerDestinationController::class, 'show'])->name('destinations.show');
     Route::post('/wisata/{destination}/checkout', [PaymentController::class, 'confirm'])->name('checkout');
     Route::post('/wisata/{destination}/checkout/confirm', [PaymentController::class, 'checkout'])->name('checkout.confirm');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
@@ -65,6 +67,7 @@ Route::prefix('buyer')->middleware(['auth', 'role:buyer'])->name('buyer.')->grou
     Route::get('/tiket-saya', [TicketController::class, 'index'])->name('tickets.index');
     Route::get('/tiket-saya/{ticket}', [TicketController::class, 'show'])->name('tickets.show');
     Route::get('/tiket-saya/{ticket}/download', [TicketController::class, 'download'])->name('tickets.download');
+    Route::get('/transaksi/{transaction}/status', [TicketController::class, 'checkTransactionStatus'])->name('transactions.check-status');
 });
 
 Route::prefix('operator')->middleware(['auth', 'role:operator', 'verified_operator'])->name('operator.')->group(function () {

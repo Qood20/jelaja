@@ -28,13 +28,23 @@ class ProfileController extends Controller
         $user->email = $request->email;
 
         if ($request->hasFile('profile_photo')) {
-            // Delete old photo if exists
+            // Delete old photo if exists (optional, safely handled)
             if ($user->profile_photo_url) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $user->profile_photo_url));
+                $baseUploadPath = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/') : public_path();
+                $oldPath = $baseUploadPath . '/' . str_replace(['/storage/', 'storage/'], '', $user->profile_photo_url);
+                if (file_exists($oldPath)) {
+                    @unlink($oldPath);
+                }
             }
 
-            $path = $request->file('profile_photo')->store('profiles', 'public');
-            $user->profile_photo_url = Storage::url($path);
+            // Simpan langsung ke folder root web (htdocs/profiles atau public/profiles)
+            $file = $request->file('profile_photo');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            
+            $uploadPath = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/profiles' : public_path('profiles');
+            $file->move($uploadPath, $filename);
+            
+            $user->profile_photo_url = 'profiles/' . $filename;
         }
 
         $user->save();

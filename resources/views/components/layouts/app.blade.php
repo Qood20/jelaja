@@ -4,32 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Jelaja' }}</title>
+    <!-- 1. Tambahkan Favicon (Ikon di Tab Browser) -->
+    <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
+
     @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @else
+        <link rel="icon" type="image/png" href="{{ asset('logo.png') }}">
         <script src="https://cdn.tailwindcss.com"></script>
         <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @endif
 </head>
 <body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
     <div x-data="{ menuOpen: false, profileOpen: false }" class="min-h-screen">
         <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-lg">
-            <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+            <div class="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:gap-3">
+                <!-- 2. Logo Header (Ganti SVG ke Gambar logo.png) -->
                 <a href="{{ route('landing') }}" class="flex items-center gap-3">
-                    <span class="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-700 text-white shadow-lg">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-6 w-6">
-                            <path fill="currentColor" d="M4 18c.5 0 1-.2 1.4-.6l12.5-12.5 2.1 2.1L7.6 19.5c-.4.4-.9.5-1.4.5H4v-2zm15.3-12.6l-1.6 1.6 2.1 2.1 1.6-1.6a1 1 0 0 0 0-1.4l-1.5-1.5a1 1 0 0 0-1.4 0zm-2.9 5.3l-6 6L7 14.4l6-6 2.4 2.4z"/>
-                        </svg>
-                    </span>
+                    <img src="{{ asset('logo.png') }}" alt="Logo Jelaja" class="h-11 w-11 rounded-2xl shadow-lg object-cover">
                     <span class="text-xl font-bold tracking-tight text-slate-900">Jelaja</span>
                 </a>
 
                 <div class="hidden items-center gap-3 text-sm md:flex">
                     <a href="{{ route('landing') }}" class="rounded-full px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-100">Beranda</a>
-                    <a href="{{ route('contact') }}" class="rounded-full px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-100">Kontak</a>
+                    <a href="{{ route('destinations.index') }}" class="rounded-full px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-100">Wisata</a>
                     @auth
+                        @if(auth()->user()->role === 'buyer')
+                            <a href="{{ route('buyer.tickets.index') }}" class="rounded-full px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-100">Tiket Saya</a>
+                        @endif
                         <a href="{{ route('dashboard.redirect') }}" class="rounded-full px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-100">Panel</a>
                     @endauth
+                    <a href="{{ route('contact') }}" class="rounded-full px-3 py-2 font-medium text-slate-700 transition hover:bg-slate-100">Kontak</a>
                 </div>
 
                 <div class="flex items-center gap-2">
@@ -43,7 +49,7 @@
                                         {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                                     </span>
                                 @endif
-                                <span>{{ auth()->user()->name }}</span>
+                                <span class="hidden sm:inline">{{ auth()->user()->name }}</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M6 9l6 6 6-6" />
                                 </svg>
@@ -71,8 +77,12 @@
 
             <div x-show="menuOpen" x-cloak class="border-t border-slate-200 bg-slate-50 px-4 py-4 md:hidden">
                 <a href="{{ route('landing') }}" class="block rounded-3xl px-4 py-3 text-sm text-slate-700 hover:bg-white">Beranda</a>
+                <a href="{{ route('destinations.index') }}" class="mt-2 block rounded-3xl px-4 py-3 text-sm text-slate-700 hover:bg-white">Wisata</a>
                 <a href="{{ route('contact') }}" class="mt-2 block rounded-3xl px-4 py-3 text-sm text-slate-700 hover:bg-white">Kontak</a>
                 @auth
+                    @if(auth()->user()->role === 'buyer')
+                        <a href="{{ route('buyer.tickets.index') }}" class="mt-2 block rounded-3xl px-4 py-3 text-sm text-slate-700 hover:bg-white">Tiket Saya</a>
+                    @endif
                     <a href="{{ route('dashboard.redirect') }}" class="mt-2 block rounded-3xl px-4 py-3 text-sm text-slate-700 hover:bg-white">Panel</a>
                     <a href="{{ route('profile.edit') }}" class="mt-2 block rounded-3xl px-4 py-3 text-sm text-slate-700 hover:bg-white">Edit Profil</a>
                     <form action="{{ route('logout') }}" method="POST" class="mt-2">
@@ -104,21 +114,6 @@
         </div>
 
         <main class="mx-auto max-w-7xl px-4 py-8 pb-20 sm:px-6 md:pb-8">
-            @if (session('success'))
-                <div class="mb-6 rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-medium text-emerald-700 shadow-sm">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if ($errors->any())
-                <div class="mb-6 rounded-3xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 shadow-sm">
-                    <ul class="space-y-2">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             {{ $slot }}
         </main>
 
@@ -126,12 +121,9 @@
             <div class="mx-auto max-w-7xl px-4 py-12">
                 <div class="grid grid-cols-1 gap-8 md:grid-cols-3">
                     <div>
+                        <!-- 3. Logo Footer (Ganti SVG ke Gambar logo.png) -->
                         <div class="flex items-center gap-2">
-                            <span class="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-5 w-5 fill-white">
-                                    <path d="M4 18c.5 0 1-.2 1.4-.6l12.5-12.5 2.1 2.1L7.6 19.5c-.4.4-.9.5-1.4.5H4v-2zm15.3-12.6l-1.6 1.6 2.1 2.1 1.6-1.6a1 1 0 0 0 0-1.4l-1.5-1.5a1 1 0 0 0-1.4 0zm-2.9 5.3l-6 6L7 14.4l6-6 2.4 2.4z"/>
-                                </svg>
-                            </span>
+                            <img src="{{ asset('logo.png') }}" alt="Logo Jelaja" class="h-10 w-10 rounded-2xl object-cover">
                             <span class="text-lg font-bold">Jelaja</span>
                         </div>
                         <p class="mt-2 text-sm text-slate-400">Marketplace Tiket Wisata Online Indonesia</p>
@@ -168,5 +160,43 @@
             </div>
         </footer>
     </div>
+
+    <!-- Script Notifikasi Global -->
+    <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000,
+                customClass: {
+                    popup: 'rounded-3xl'
+                }
+            });
+        @endif
+
+        @if (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ session('error') }}',
+                customClass: {
+                    popup: 'rounded-3xl'
+                }
+            });
+        @endif
+
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Ada Kesalahan',
+                text: '{{ $errors->first() }}',
+                customClass: {
+                    popup: 'rounded-3xl'
+                }
+            });
+        @endif
+    </script>
 </body>
 </html>

@@ -58,8 +58,14 @@ class DestinationController extends Controller
 
         $data['image_url'] = null;
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->storePublicly('destinations', 'public');
-            $data['image_url'] = '/storage/' . $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            
+            // Penyesuaian path untuk shared hosting (ByetHost) dan Local
+            $uploadPath = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/destinations' : public_path('destinations');
+            $file->move($uploadPath, $filename);
+            
+            $data['image_url'] = 'destinations/' . $filename;
         }
 
         // Clean up social media - remove empty values
@@ -120,8 +126,22 @@ class DestinationController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->storePublicly('destinations', 'public');
-            $data['image_url'] = '/storage/' . $path;
+            // Delete old photo if exists (optional cleanup)
+            if ($destination->image_url) {
+                $baseUploadPath = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/') : public_path();
+                $oldPath = $baseUploadPath . '/' . str_replace(['/storage/', 'storage/'], '', $destination->image_url);
+                if (file_exists($oldPath)) {
+                    @unlink($oldPath);
+                }
+            }
+
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            
+            $uploadPath = !empty($_SERVER['DOCUMENT_ROOT']) ? rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/destinations' : public_path('destinations');
+            $file->move($uploadPath, $filename);
+            
+            $data['image_url'] = 'destinations/' . $filename;
         }
 
         // Clean up social media - remove empty values

@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="rounded-3xl bg-slate-900 p-4 text-center text-white">
-                    <video id="qr-video" class="mx-auto max-h-96 w-full rounded-3xl bg-black" playsinline></video>
+                    <video id="qr-video" class="mx-auto max-h-96 w-full rounded-3xl bg-black" playsinline autoplay muted></video>
                     <canvas id="qr-canvas" class="hidden"></canvas>
                 </div>
 
@@ -41,22 +41,6 @@
                 </div>
                 <button type="submit" class="w-full rounded-2xl bg-blue-700 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-800">Verifikasi Tiket</button>
             </form>
-
-            @if ($errors->any())
-                <div class="mt-4 rounded-2xl bg-red-50 p-4 text-sm text-red-700">
-                    <ul class="list-disc space-y-1 pl-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            @if (session('success'))
-                <div class="mt-4 rounded-2xl bg-emerald-50 p-4 text-sm text-emerald-700">
-                    {{ session('success') }}
-                </div>
-            @endif
         </div>
     </div>
 
@@ -71,9 +55,27 @@
         let stream = null;
         let scanActive = false;
 
+        // Check for secure context immediately
+        if (!window.isSecureContext) {
+            statusText.textContent = 'Peringatan: Kamera hanya dapat diakses melalui koneksi HTTPS (Aman).';
+            statusText.classList.add('text-amber-600', 'font-semibold');
+        }
+
         async function startCamera() {
+            if (typeof jsQR === 'undefined') {
+                statusText.textContent = 'Gagal memuat library scanner. Periksa koneksi internet Anda.';
+                statusText.classList.add('text-red-600');
+                return;
+            }
+
+            if (!window.isSecureContext) {
+                statusText.textContent = 'Akses kamera gagal: Koneksi tidak aman (HTTPS diperlukan). Silakan hubungi admin atau gunakan link HTTPS.';
+                statusText.classList.add('text-red-600', 'font-semibold');
+                return;
+            }
+
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                statusText.textContent = 'Browser Anda tidak mendukung akses kamera. Gunakan input manual.';
+                statusText.textContent = 'Browser Anda tidak mendukung akses kamera atau izin ditolak. Gunakan input manual.';
                 return;
             }
 
@@ -131,5 +133,29 @@
 
         startButton.addEventListener('click', startCamera);
         stopButton.addEventListener('click', stopCamera);
+
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000,
+                customClass: {
+                    popup: 'rounded-3xl'
+                }
+            });
+        @endif
+
+        @if ($errors->any())
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ $errors->first() }}',
+                customClass: {
+                    popup: 'rounded-3xl'
+                }
+            });
+        @endif
     </script>
 </x-layouts.app>

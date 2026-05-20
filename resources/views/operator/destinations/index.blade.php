@@ -1,7 +1,15 @@
 <x-layouts.app title="Kelola Destinasi">
     <div class="flex items-center justify-between">
-        <h1 class="text-2xl font-semibold">Destinasi Wisata</h1>
-        <a href="{{ route('operator.destinations.create') }}" class="rounded bg-blue-700 px-4 py-2 text-white">Tambah</a>
+        <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+            @if(auth()->user()->role === 'admin')
+                Kelola Semua Destinasi (Panel Admin)
+            @else
+                Kelola Destinasi Saya (Panel Operator)
+            @endif
+        </h1>
+        @if(auth()->user()->role === 'operator')
+            <a href="{{ route('operator.destinations.create') }}" class="rounded-xl bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-800 transition">Tambah Destinasi</a>
+        @endif
     </div>
     <div class="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
         @foreach ($destinations as $destination)

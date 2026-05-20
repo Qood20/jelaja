@@ -4,7 +4,7 @@
         <h1 class="mt-4 text-2xl font-bold leading-tight md:text-4xl">Jelajahi Keindahan Nusantara dalam Satu Genggaman</h1>
 <p class="mt-3 max-w-3xl text-sm/6 md:text-base">Pesan tiket dalam hitungan detik, masuk lokasi tanpa perlu antre. Liburan jadi lebih maksimal tanpa ribet urusan administrasi.</p>
         <div class="mt-6 flex flex-wrap gap-3">
-            <a href="{{ route('buyer.destinations.index') }}" class="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-blue-700">Lihat Destinasi</a>
+            <a href="{{ route('destinations.index') }}" class="rounded-xl bg-white px-4 py-2 text-sm font-semibold text-blue-700">Lihat Destinasi</a>
             <a href="{{ route('register') }}" class="rounded-xl border border-white/60 px-4 py-2 text-sm font-semibold">Mulai Sekarang</a>
         </div>
     </section>
@@ -25,7 +25,7 @@
                             <p><span class="font-semibold">Jam buka:</span> {{ $destination->opening_hours }}</p>
                             <p><span class="font-semibold">Harga:</span> Rp{{ number_format($destination->price, 0, ',', '.') }}</p>
                         </div>
-                        <a href="{{ route('buyer.destinations.show', $destination) }}" class="mt-5 inline-block rounded-xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800">Lihat Detail TRMS Serulingmas</a>
+                        <a href="{{ route('destinations.show', $destination) }}" class="mt-5 inline-block rounded-xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800">Lihat Detail TRMS Serulingmas</a>
                     </div>
                 </div>
             </article>

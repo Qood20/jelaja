@@ -56,8 +56,5 @@
             </div>
         @endif
 
-        <div class="mt-6">
-            <a href="{{ route('operator.destinations.index') }}" class="text-blue-600 hover:underline">← Kembali ke Destinasi</a>
-        </div>
     </div>
 </x-layouts.app>

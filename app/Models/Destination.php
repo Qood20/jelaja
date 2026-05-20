@@ -26,8 +26,10 @@ class Destination extends Model
             return $value;
         }
 
-        // Pastikan menggunakan asset() untuk domain hosting
-        return asset($value);
+        // Hilangkan '/storage/' atau 'storage/' agar langsung ke root/destinations
+        $path = str_replace(['/storage/', 'storage/'], '', $value);
+        
+        return asset($path);
     }
 
     public function operator(): BelongsTo
@@ -43,5 +45,10 @@ class Destination extends Model
     public function galleries(): HasMany
     {
         return $this->hasMany(DestinationGallery::class);
+    }
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
     }
 }

@@ -40,4 +40,21 @@ class TicketController extends Controller
 
         return $pdf->download('tiket-jelaja-'.$ticket->id.'.pdf');
     }
+
+    public function checkTransactionStatus(Request $request, \App\Models\Transaction $transaction)
+    {
+        abort_if($transaction->user_id !== $request->user()->id, 403);
+
+        $tickets = $transaction->tickets()->select('id', 'status', 'used_at')->get();
+
+        return response()->json([
+            'tickets' => $tickets->map(function($ticket) {
+                return [
+                    'id' => $ticket->id,
+                    'status' => $ticket->status,
+                    'used_at' => $ticket->used_at ? $ticket->used_at->format('d M Y H:i') : null,
+                ];
+            })
+        ]);
+    }
 }

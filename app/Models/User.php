@@ -24,9 +24,14 @@ class User extends Authenticatable
     public function getProfilePhotoUrl(): string
     {
         if ($this->profile_photo_url) {
-            return str_starts_with($this->profile_photo_url, 'http') 
-                ? $this->profile_photo_url 
-                : asset($this->profile_photo_url);
+            if (str_starts_with($this->profile_photo_url, 'http')) {
+                return $this->profile_photo_url;
+            }
+
+            // Hilangkan '/storage/' atau 'storage/' agar langsung ke root/profiles
+            $path = str_replace(['/storage/', 'storage/'], '', $this->profile_photo_url);
+            
+            return asset($path);
         }
 
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&color=7F9CF5&background=EBF4FF';

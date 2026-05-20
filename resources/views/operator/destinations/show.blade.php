@@ -86,12 +86,8 @@
 
         <!-- Actions -->
         <div class="flex flex-wrap gap-3 rounded-lg bg-slate-50 p-6">
-
             <a href="{{ route('operator.destinations.edit', $destination) }}" class="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition">
                 ✏️ Edit
-            </a>
-            <a href="{{ route('operator.destinations.index') }}" class="rounded-lg border border-slate-300 px-4 py-2 text-slate-700 hover:bg-slate-100 transition">
-                ← Kembali
             </a>
         </div>
     </div>

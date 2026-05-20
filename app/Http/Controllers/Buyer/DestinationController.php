@@ -8,10 +8,19 @@ use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $destinations = Destination::query()->latest()->paginate(12);
-        return view('buyer.destinations.index', compact('destinations'));
+        $query = Destination::query()->latest();
+
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $destinations = $query->paginate(12)->withQueryString();
+        return view('buyer.destinations.index', compact('destinations', 'search'));
     }
 
     public function show(Destination $destination)

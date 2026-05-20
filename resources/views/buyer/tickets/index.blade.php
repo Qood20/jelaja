@@ -72,4 +72,29 @@
         </div>
         <div class="mt-6">{{ $transactions->links() }}</div>
     </div>
+    <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                showConfirmButton: false,
+                timer: 3000,
+                customClass: {
+                    popup: 'rounded-3xl'
+                }
+            });
+        @endif
+
+        @if (session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: '{{ session('error') }}',
+                customClass: {
+                    popup: 'rounded-3xl'
+                }
+            });
+        @endif
+    </script>
 </x-layouts.app>
